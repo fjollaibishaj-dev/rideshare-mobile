@@ -1,42 +1,20 @@
-# UniRide - Rideshare Mobile
+# RideShare — Java 3
 
-UniRide is a demonstration application for AAB College students to find and view available rides to university.
-
-## Features
-
-- View available rides.
-- Search rides by departure city.
-- View ride details.
-- Make a demonstration reservation.
-- View available seats.
-
-## Technologies
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-
-## Getting Started
-
-Install the dependencies:
+## Nisja e aplikacionit
 
 ```bash
+cd aplikacioni
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Hape [http://localhost:3000](http://localhost:3000).
 
-## Project Note
+## Rrugët
 
-This is a demonstration project for AAB College. The trip data is sample data, and reservations are not connected to a real booking system.
+- `/` — lista me tri udhëtime fiktive.
+- `/udhetimi/1`, `/udhetimi/2`, `/udhetimi/3` — detajet e udhëtimit.
+- `/udhetimi/[id]/kerkesa` — simulimi “Në pritje” për udhëtimet me vende.
+- `/udhetimi/99` — faqja 404 e personalizuar.
 
-## Repository
-
-[UniRide on GitHub](https://github.com/fjollaibishaj-dev/rideshare-mobile)
+Ky projekt është vetëm demonstrim i Java 3: nuk ka databazë, autentikim, pagesa ose rezervim real. Kërkesa për vend shfaqet si simulim dhe nuk ruhet.
