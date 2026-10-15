@@ -21,13 +21,17 @@ UniRide is a demonstration application for AAB College students to find and view
 
 Install the dependencies:
 
-    npm install
+```bash
+npm install
+```
 
 Start the development server:
 
-    npm run dev
+```bash
+npm run dev
+```
 
-Open http://localhost:3000 in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Project Note
 
@@ -35,4 +39,4 @@ This is a demonstration project for AAB College. The trip data is sample data, a
 
 ## Repository
 
-https://github.com/fjollaibishaj-dev/rideshare-mobile
+[UniRide on GitHub](https://github.com/fjollaibishaj-dev/rideshare-mobile)
