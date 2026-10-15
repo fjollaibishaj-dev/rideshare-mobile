@@ -1,7 +1,4 @@
-
 import Link from "next/link";
-
-export const instant = false;
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -14,7 +11,7 @@ export default async function KerkesaPage({ params }: Props) {
     <main className="min-h-screen bg-slate-100 p-8 text-gray-900">
       <div className="mx-auto max-w-2xl rounded-2xl bg-white p-6 shadow">
         <p className="font-semibold text-blue-700">
-          AAB College — RideShare
+          AAB College — UniRide
         </p>
 
         <h1 className="mt-3 text-3xl font-bold">
