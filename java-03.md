@@ -1,10 +1,13 @@
 # Java 3 — RideShare
 
-## Prova 1
-Aplikacioni RideShare niset me sukses duke përdorur `npm run dev` dhe hapet në `http://localhost:3000`.
+## Prova 1 — Nisja e aplikacionit
+Hapat: Hapa terminalin në folderin rideshare-mobile dhe ekzekutova komandën npm.cmd run dev.
+Rezultati: Aplikacioni u nis me sukses dhe faqja u hap në http://localhost:3000.
 
-## Prova 2
-Faqja kryesore shfaq listën e tri udhëtimeve fiktive dhe përdoruesi mund të hapë detajet e tyre.
+## Prova 2 — Lista e udhëtimeve
+Hapat: Hapa faqen kryesore të aplikacionit dhe kontrollova listën e udhëtimeve.
+Rezultati: Faqja kryesore shfaqi udhëtimet e publikuara në aplikacion.
 
-## Prova 3
-Aplikacioni demonstron faqet e detajeve të udhëtimit dhe simulimin e kërkesës për vend, pa rezervime reale ose databazë.
+## Prova 3 — Detajet dhe kërkesa për vend
+Hapat: Zgjodha një udhëtim dhe hapa faqen e detajeve. Pastaj hapa faqen e kërkesës për vend.
+Rezultati: U shfaqën detajet e udhëtimit dhe mesazhi se kërkesa është në pritje. Nuk u krye rezervim real.
