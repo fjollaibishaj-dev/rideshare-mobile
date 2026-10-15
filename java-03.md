@@ -2,18 +2,29 @@
 
 ## Prova 1 — Nisja e aplikacionit
 
-Hapat: Hapa terminalin në folderin rideshare-mobile dhe ekzekutova komandën npm.cmd run dev.
+Hapat:
+1. Hapa terminalin në folderin rideshare-mobile.
+2. Ekzekutova komandën `npm.cmd run dev`.
+3. Hapa adresën `http://localhost:3000` në shfletues.
 
-Rezultati: Aplikacioni u nis dhe faqja u hap në adresën http://localhost:3000.
+Rezultati:
+Aplikacioni u nis dhe faqja kryesore u hap në shfletues.
 
 ## Prova 2 — Lista e udhëtimeve
 
-Hapat: Hapa faqen kryesore të RideShare dhe kontrollova listën e udhëtimeve.
+Hapat:
+1. Hapa faqen kryesore të aplikacionit.
+2. Kontrollova kartat e udhëtimeve.
+3. Zgjodha një udhëtim për të hapur detajet.
 
-Rezultati: Në faqen kryesore u shfaqën udhëtimet e publikuara në aplikacion.
+Rezultati:
+Kartat e udhëtimeve u shfaqën dhe lidhja hapi faqen e detajeve.
 
-## Prova 3 — Detajet e udhëtimit dhe kërkesa
+## Prova 3 — Kërkesa për vend
 
-Hapat: Zgjodha një udhëtim, hapa detajet dhe pastaj faqen e kërkesës për vend.
+Hapat:
+1. Hapa faqen e detajeve të një udhëtimi.
+2. Hapa faqen e kërkesës për vend.
 
-Rezultati: U shfaqën detajet e udhëtimit dhe mesazhi se kërkesa është në pritje. Nuk u krye rezervim real.
+Rezultati:
+Faqja e kërkesës shfaqi mesazhin se kërkesa është në pritje. Nuk u krye rezervim real.
