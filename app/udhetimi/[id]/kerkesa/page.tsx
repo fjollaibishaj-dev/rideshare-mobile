@@ -1,8 +1,11 @@
+
 import Link from "next/link";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export const instant = false;
 
 export default async function KerkesaPage({ params }: Props) {
   const { id } = await params;
