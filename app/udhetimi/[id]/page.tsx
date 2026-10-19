@@ -1,5 +1,7 @@
-import { gjejUdhetimin } from "../../lib/udhetimet";
+
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { lexoUdhetimet } from "@/lib/udhetimet";
 import RezervoVendin from "../../components/RezervoVendin";
 
 export const instant = false;
@@ -8,27 +10,18 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+
 export default async function Page({ params }: Props) {
   const { id } = await params;
-  const udhetimi = gjejUdhetimin(id);
+
+  const udhetimet = await lexoUdhetimet();
+
+  const udhetimi = udhetimet.find(
+    (u) => String(u.id) === id
+  );
 
   if (!udhetimi) {
-    return (
-      <main className="min-h-screen bg-slate-100 p-8 text-gray-900">
-        <div className="mx-auto max-w-2xl rounded-2xl bg-white p-6 shadow">
-          <h1 className="text-3xl font-bold">
-            Udhëtimi nuk u gjet
-          </h1>
-
-          <Link
-            href="/"
-            className="mt-6 inline-block rounded-lg bg-blue-700 px-5 py-3 text-white"
-          >
-            Kthehu te faqja kryesore
-          </Link>
-        </div>
-      </main>
-    );
+    notFound();
   }
 
   return (
@@ -58,15 +51,19 @@ export default async function Page({ params }: Props) {
 
           <p>
             <strong>Vendtakimi:</strong>{" "}
-            {udhetimi.vendtakimi}
+            {udhetimi.vendiNisjes}
           </p>
 
           <p>
-            <strong>Vende të lira:</strong> {udhetimi.vende}
+            <strong>Vende të lira:</strong>{" "}
+            {udhetimi.vendeLira}
           </p>
         </div>
 
-        <RezervoVendin vende={udhetimi.vende} />
+        <RezervoVendin
+          id={udhetimi.id}
+          vende={udhetimi.vendeLira}
+        />
 
         <Link
           href="/"

@@ -1,5 +1,7 @@
-
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { lexoUdhetimet } from "@/lib/udhetimet";
+import FormulariRezervimit from "@/app/components/FormulariRezervimit";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -10,6 +12,16 @@ export const instant = false;
 export default async function KerkesaPage({ params }: Props) {
   const { id } = await params;
 
+  const udhetimet = await lexoUdhetimet();
+
+  const udhetimi = udhetimet.find(
+    (u) => String(u.id) === id
+  );
+
+  if (!udhetimi) {
+    notFound();
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 p-8 text-gray-900">
       <div className="mx-auto max-w-2xl rounded-2xl bg-white p-6 shadow">
@@ -18,17 +30,33 @@ export default async function KerkesaPage({ params }: Props) {
         </p>
 
         <h1 className="mt-3 text-3xl font-bold">
-          Kërkesë për vend në udhëtim
+          Kërkesë për rezervim
         </h1>
 
-        <p className="mt-6">
-          Kërkesa për udhëtimin #{id} është në pritje.
-        </p>
+        <div className="mt-5 rounded-lg bg-slate-50 p-4">
+          <p>
+            <strong>Nisja:</strong> {udhetimi.nisja}
+          </p>
 
-        <p className="mt-3 text-gray-600">
-          Ky është vetëm një demonstrim. Nuk kryhet rezervim real
-          dhe kërkesa nuk ruhet në databazë.
-        </p>
+          <p>
+            <strong>Destinacioni:</strong>{" "}
+            {udhetimi.destinacioni}
+          </p>
+
+          <p>
+            <strong>Ora:</strong> {udhetimi.ora}
+          </p>
+
+          <p>
+            <strong>Vendet e lira:</strong>{" "}
+            {udhetimi.vendeLira}
+          </p>
+        </div>
+
+        <FormulariRezervimit
+          udhetimiId={String(udhetimi.id)}
+          vende={udhetimi.vendeLira}
+        />
 
         <Link
           href={`/udhetimi/${id}`}
