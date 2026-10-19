@@ -1,33 +1,31 @@
 # Java 3 — RideShare
 
-## Prova 1 — Nisja e aplikacionit
+## Prova 1 — Lista e udhëtimeve në telefon
 
 Hapat:
-1. Hapa terminalin në folderin rideshare-mobile.
-2. Ekzekutova komandën `npm.cmd run dev`.
-3. Hapa adresën http://localhost:3000 në shfletues.
+1. Nisa aplikacionin me `npm.cmd run dev`.
+2. Hapa `http://localhost:3000`.
+3. Kontrollova faqen në pamjen e telefonit përmes Chrome DevTools.
 
 Rezultati:
-Aplikacioni u nis dhe faqja kryesore u hap në shfletues.
+Faqja kryesore shfaqi saktësisht tri karta udhëtimesh dhe nuk pati lëvizje horizontale në pamjen e telefonit.
 
-## Prova 2 — Lista e udhëtimeve
+## Prova 2 — Detajet, vendet e lira dhe faqja 404
 
 Hapat:
-1. Hapa faqen kryesore të aplikacionit.
-2. Kontrollova kartat e udhëtimeve.
-3. Zgjodha një udhëtim për të hapur faqen e detajeve.
+1. Hapa `http://localhost:3000/udhetimi/2`.
+2. Hapa `http://localhost:3000/udhetimi/3`.
+3. Hapa `http://localhost:3000/udhetimi/99`.
 
 Rezultati:
-Kartat e udhëtimeve u shfaqën dhe arrita te faqja e detajeve të udhëtimit.
+Te udhëtimi nr. 2 u shfaq vendi i takimit Fushë Kosovë. Te udhëtimi nr. 3 u shfaq mesazhi se nuk ka vende të lira për rezervim. Te adresa e udhëtimit nr. 99 u shfaq faqja e personalizuar me mesazhin “Udhëtimi nuk u gjet”.
 
-## Prova 3 — Kërkesa për vend
+## Prova 3 — Formulari i kërkesës dhe kthimi te detajet
 
 Hapat:
-1. Hapa faqen e detajeve të një udhëtimi.
-2. Klikova "Rezervo vendin" për të hapur faqen e kërkesës.
-3. Plotësova emrin dhe email-in testues.
-4. Klikova "Dërgo kërkesën".
-5. Kontrollova tabelën `rezervimet` në Neon.
+1. Hapa `http://localhost:3000/udhetimi/2/kerkesa`.
+2. Kontrollova fushat për emrin dhe email-in.
+3. Klikova “Kthehu te detajet e udhëtimit”.
 
 Rezultati:
-Aplikacioni shfaqi mesazhin "Kërkesa u ruajt me sukses." dhe kërkesa u ruajt në tabelën `rezervimet` në Neon.
+Faqja e kërkesës u hap dhe shfaqi fushat për emrin dhe email-in. Butoni “Kthehu te detajet e udhëtimit” më ktheu me sukses te detajet e udhëtimit nr. 2.
