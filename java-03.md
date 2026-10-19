@@ -24,7 +24,10 @@ Kartat e udhëtimeve u shfaqën dhe lidhja hapi faqen e detajeve.
 
 Hapat:
 1. Hapa faqen e detajeve të një udhëtimi.
-2. Hapa faqen e kërkesës për vend.
+2. Klikova "Rezervo vendin" për të hapur faqen e kërkesës.
+3. Plotësova emrin dhe email-in testues.
+4. Klikova "Dërgo kërkesën".
+5. Kontrollova tabelën `rezervimet` në Neon.
 
 Rezultati:
-Faqja e kërkesës shfaqi mesazhin se kërkesa është në pritje. Nuk u krye rezervim real.
+Aplikacioni shfaqi mesazhin "Kërkesa u ruajt me sukses." dhe kërkesa u shfaq në tabelën `rezervimet` në Neon.
