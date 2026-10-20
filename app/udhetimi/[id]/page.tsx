@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { lexoUdhetimet } from "@/lib/udhetimet";
 import RezervoVendin from "../../components/RezervoVendin";
 
-export const instant = false;
 
 type Props = {
   params: Promise<{ id: string }>;
