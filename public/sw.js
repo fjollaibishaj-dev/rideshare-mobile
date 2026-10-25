@@ -1,6 +1,5 @@
 
-
-const CACHE_NAME = "rideshare-v2";
+const CACHE_NAME = "rideshare-v3";
 const OFFLINE_URL = "/offline.html";
 
 const STATIC_FILES = [
@@ -23,8 +22,8 @@ self.addEventListener("install", (event) => {
           if (response.ok) {
             await cache.put(url, response);
           }
-        } catch (error) {
-          console.warn("Skedari nuk u ruajt:", url);
+        } catch {
+          console.warn("Nuk u ruajt në cache:", url);
         }
       }
 
@@ -40,7 +39,11 @@ self.addEventListener("activate", (event) => {
 
       await Promise.all(
         keys
-          .filter((key) => key.startsWith("rideshare-") && key !== CACHE_NAME)
+          .filter(
+            (key) =>
+              key.startsWith("rideshare-") &&
+              key !== CACHE_NAME
+          )
           .map((key) => caches.delete(key))
       );
 
@@ -53,7 +56,10 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  if (request.method !== "GET" || url.origin !== self.location.origin) {
+  if (
+    request.method !== "GET" ||
+    url.origin !== self.location.origin
+  ) {
     return;
   }
 
@@ -89,25 +95,28 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate") {
     event.respondWith(
       (async () => {
-        try {
-          const response = await fetch(request);
+        if (url.pathname === "/") {
+          const cachedHome = await caches.match("/");
 
-          if (response.ok && url.pathname === "/") {
-            const cache = await caches.open(CACHE_NAME);
-            await cache.put("/", response.clone());
+          if (cachedHome) {
+            return cachedHome;
           }
+        }
 
-          return response;
+        try {
+          return await fetch(request);
         } catch {
           const cachedPage = await caches.match(request);
 
-          if (cachedPage) return cachedPage;
+          if (cachedPage) {
+            return cachedPage;
+          }
 
           const offlinePage = await caches.match(OFFLINE_URL);
 
           return (
             offlinePage ||
-            new Response("Je offline. Provo përsëri kur të kesh internet.", {
+            new Response("Je offline. Provo përsëri.", {
               headers: {
                 "Content-Type": "text/plain; charset=utf-8",
               },
