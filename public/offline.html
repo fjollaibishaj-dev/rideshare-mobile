@@ -1,59 +1,205 @@
-
 <!DOCTYPE html>
 <html lang="sq">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#be3455">
-  <title>RideShare - Offline</title>
+  <title>RideShare - Udhëtimet offline</title>
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 24px;
-      box-sizing: border-box;
       font-family: Arial, sans-serif;
-      text-align: center;
       color: #172033;
       background: #f7e9ed;
     }
 
     main {
-      max-width: 420px;
-      padding: 32px;
-      border-radius: 20px;
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    h1 { color: #be3455; }
+
+    .status, .card {
+      padding: 18px;
+      margin: 16px 0;
+      border-radius: 14px;
       background: white;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
     }
 
-    h1 {
+    .card h2 {
+      margin-top: 0;
       color: #be3455;
+      font-size: 20px;
     }
 
-    p {
-      line-height: 1.6;
-    }
+    p { line-height: 1.6; }
 
-    a {
+    button, .home-link {
       display: inline-block;
-      margin-top: 12px;
-      padding: 12px 20px;
-      border-radius: 10px;
+      margin: 8px 8px 8px 0;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 9px;
       color: white;
       background: #be3455;
+      font-size: 15px;
       text-decoration: none;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    .muted {
+      color: #555;
+      font-size: 14px;
     }
   </style>
 </head>
+
 <body>
   <main>
-    <h1>Je offline</h1>
-    <p>Nuk ke lidhje me internetin për momentin.</p>
-    <p>Udhëtimet e ruajtura më parë mund të jenë ende të disponueshme.</p>
-    <a href="/">Provo përsëri</a>
+    <h1>RideShare — Udhëtimet</h1>
+
+    <section class="status">
+      <h2>Statusi i lidhjes</h2>
+      <p id="statusi">Duke kontrolluar udhëtimet...</p>
+      <p id="ruajtur" class="muted">
+        Koha e ruajtjes do të shfaqet këtu.
+      </p>
+
+      <button id="rifresko">Rifresko listën</button>
+      <a class="home-link" href="/">Faqja kryesore</a>
+    </section>
+
+    <p class="muted">
+      Kjo faqe shërben vetëm për lexim të udhëtimeve publike.
+      Nuk mund të konfirmosh rezervim këtu. Rezervimi kërkon internet.
+    </p>
+
+    <section id="lista" aria-live="polite"></section>
   </main>
+
+  <script>
+    const lista = document.getElementById("lista");
+    const statusi = document.getElementById("statusi");
+    const ruajtur = document.getElementById("ruajtur");
+    const rifresko = document.getElementById("rifresko");
+
+    function shfaqUdhetimet(trips, burimi, koha) {
+      lista.replaceChildren();
+
+      if (!Array.isArray(trips) || trips.length === 0) {
+        lista.textContent =
+          "Nuk ka udhëtime të ruajtura për t'u shfaqur.";
+        return;
+      }
+
+      trips.forEach((trip) => {
+        const karta = document.createElement("article");
+        karta.className = "card";
+
+        const titulli = document.createElement("h2");
+        titulli.textContent =
+          (trip.nisja || "Nisja") + " → " +
+          (trip.destinacioni || "Destinacioni");
+
+        const ora = document.createElement("p");
+        ora.textContent =
+          "Ora: " + (trip.ora || "Nuk është caktuar");
+
+        const vendi = document.createElement("p");
+        vendi.textContent =
+          "Vendi i takimit: " +
+          (trip.vendtakimi || trip.vendiNisjes || "Nuk është caktuar");
+
+        const vende = document.createElement("p");
+        vende.textContent =
+          "Vende të lira: " +
+          (trip.vende ?? trip.vendeLira ?? 0);
+
+        const shenim = document.createElement("p");
+        shenim.className = "muted";
+        shenim.textContent =
+          "Vetëm informacion — nuk është rezervim.";
+
+        karta.append(titulli, ora, vendi, vende, shenim);
+        lista.appendChild(karta);
+      });
+
+      statusi.textContent = burimi === "rrjeti"
+        ? "Lista u përditësua nga serveri."
+        : "Po shfaqet lista e ruajtur për përdorim offline.";
+
+      ruajtur.textContent = koha
+        ? "Lista u ruajt: " + koha
+        : "Koha e ruajtjes nuk është e disponueshme.";
+    }
+
+    async function ngarkoUdhetimet() {
+      rifresko.disabled = true;
+      statusi.textContent = "Duke ngarkuar listën...";
+
+      try {
+        const pergjigjja = await fetch("/api/udhetimet", {
+          method: "GET",
+          cache: "no-store"
+        });
+
+        if (!pergjigjja.ok) {
+          throw new Error("Lista nuk mund të merret.");
+        }
+
+        const data = await pergjigjja.json();
+
+        shfaqUdhetimet(
+          data.trips || data.udhetimet || [],
+          "rrjeti",
+          new Date().toLocaleString("sq-AL")
+        );
+      } catch {
+        statusi.textContent =
+          "Nuk u lidhëm me serverin. Po kërkojmë listën e ruajtur.";
+
+        try {
+          const pergjigjja = await fetch("/api/udhetimet", {
+            method: "GET",
+            cache: "no-store"
+          });
+
+          if (!pergjigjja.ok) {
+            throw new Error("Nuk ka përgjigje të ruajtur.");
+          }
+
+          const data = await pergjigjja.json();
+
+          shfaqUdhetimet(
+            data.trips || data.udhetimet || [],
+            "cache",
+            pergjigjja.headers.get("x-rideshare-saved-at") ||
+              "E ruajtur më parë"
+          );
+        } catch {
+          lista.textContent =
+            "Nuk u gjet lista offline. Hape këtë faqe kur je online të paktën një herë, pastaj provo përsëri.";
+          ruajtur.textContent = "";
+          statusi.textContent =
+            "Lista offline nuk është ende e disponueshme.";
+        }
+      } finally {
+        rifresko.disabled = false;
+      }
+    }
+
+    rifresko.addEventListener("click", ngarkoUdhetimet);
+    ngarkoUdhetimet();
+  </script>
 </body>
 </html>

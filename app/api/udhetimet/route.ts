@@ -1,5 +1,3 @@
-
-
 import { lexoUdhetimet } from "@/lib/udhetimet";
 
 export const dynamic = "force-dynamic";

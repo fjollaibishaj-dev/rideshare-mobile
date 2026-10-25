@@ -1,12 +1,9 @@
-
-
-const CACHE_NAME = "rideshare-v4";
+const CACHE_NAME = "rideshare-public-v1";
 const OFFLINE_URL = "/offline.html";
+const API_URL = "/api/udhetimet";
 
 const STATIC_FILES = [
-  "/",
   OFFLINE_URL,
-  "/manifest.webmanifest",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
 ];
@@ -41,7 +38,7 @@ self.addEventListener("activate", (event) => {
         keys
           .filter(
             (key) =>
-              key.startsWith("rideshare-") &&
+              key.startsWith("rideshare-public-") &&
               key !== CACHE_NAME
           )
           .map((key) => caches.delete(key))
@@ -63,27 +60,53 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (url.pathname === "/api/udhetimet") {
+  if (url.pathname === API_URL) {
     event.respondWith(
       (async () => {
         try {
           const response = await fetch(request);
 
-          if (response.ok) {
-            const cache = await caches.open(CACHE_NAME);
-            await cache.put(request, response.clone());
+          if (!response.ok) {
+            throw new Error("Serveri nuk e ktheu listën.");
           }
 
-          return response;
-        } catch {
-          const cached = await caches.match(request);
+          const savedAt = new Date().toISOString();
+          const headers = new Headers(response.headers);
 
-          return (
-            cached ||
-            Response.json(
-              { error: "Lista nuk është e disponueshme offline." },
-              { status: 503 }
-            )
+          headers.set("x-rideshare-saved-at", savedAt);
+          headers.set("x-rideshare-source", "network");
+
+          const responseToReturn = new Response(
+            await response.clone().arrayBuffer(),
+            {
+              status: response.status,
+              statusText: response.statusText,
+              headers,
+            }
+          );
+
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(API_URL, responseToReturn.clone());
+
+          return responseToReturn;
+        } catch {
+          const cache = await caches.open(CACHE_NAME);
+          const cached = await cache.match(API_URL);
+
+          if (cached) {
+            const headers = new Headers(cached.headers);
+            headers.set("x-rideshare-source", "cache");
+
+            return new Response(await cached.arrayBuffer(), {
+              status: cached.status,
+              statusText: cached.statusText,
+              headers,
+            });
+          }
+
+          return Response.json(
+            { error: "Lista nuk është e disponueshme offline." },
+            { status: 503 }
           );
         }
       })()
@@ -93,41 +116,24 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (request.mode === "navigate") {
+    if (
+      url.pathname !== "/" &&
+      url.pathname !== OFFLINE_URL
+    ) {
+      return;
+    }
+
     event.respondWith(
       (async () => {
         try {
-          const response = await fetch(request);
-
-          if (response.ok) {
-            const cache = await caches.open(CACHE_NAME);
-
-            if (
-              url.pathname === "/" ||
-              /^\/udhetimi\/[^/]+\/?$/.test(url.pathname) ||
-              /^\/udhetimi\/[^/]+\/kerkesa\/?$/.test(url.pathname)
-            ) {
-              await cache.put(request, response.clone());
-            }
-          }
-
-          return response;
+          return await fetch(request);
         } catch {
-          const cachedPage = await caches.match(request);
-
-          if (cachedPage) {
-            return cachedPage;
-          }
-
-          if (url.pathname === "/") {
-            const cachedHome = await caches.match("/");
-            if (cachedHome) return cachedHome;
-          }
-
-          const offlinePage = await caches.match(OFFLINE_URL);
+          const cache = await caches.open(CACHE_NAME);
+          const offlinePage = await cache.match(OFFLINE_URL);
 
           return (
             offlinePage ||
-            new Response("Je offline. Provo përsëri.", {
+            new Response("Je offline. Hape lexuesin offline.", {
               headers: {
                 "Content-Type": "text/plain; charset=utf-8",
               },
@@ -140,17 +146,16 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
-    (async () => {
-      const cached = await caches.match(request);
+  if (STATIC_FILES.includes(url.pathname)) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(url.pathname);
 
-      if (cached) return cached;
+        if (cached) return cached;
 
-      try {
-        return await fetch(request);
-      } catch {
-        return new Response("", { status: 503 });
-      }
-    })()
-  );
+        return fetch(request);
+      })()
+    );
+  }
 });
