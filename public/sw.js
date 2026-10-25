@@ -1,5 +1,6 @@
 
-const CACHE_NAME = "rideshare-v3";
+
+const CACHE_NAME = "rideshare-v4";
 const OFFLINE_URL = "/offline.html";
 
 const STATIC_FILES = [
@@ -18,7 +19,6 @@ self.addEventListener("install", (event) => {
       for (const url of STATIC_FILES) {
         try {
           const response = await fetch(url);
-
           if (response.ok) {
             await cache.put(url, response);
           }
@@ -95,21 +95,32 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate") {
     event.respondWith(
       (async () => {
-        if (url.pathname === "/") {
-          const cachedHome = await caches.match("/");
-
-          if (cachedHome) {
-            return cachedHome;
-          }
-        }
-
         try {
-          return await fetch(request);
+          const response = await fetch(request);
+
+          if (response.ok) {
+            const cache = await caches.open(CACHE_NAME);
+
+            if (
+              url.pathname === "/" ||
+              /^\/udhetimi\/[^/]+\/?$/.test(url.pathname) ||
+              /^\/udhetimi\/[^/]+\/kerkesa\/?$/.test(url.pathname)
+            ) {
+              await cache.put(request, response.clone());
+            }
+          }
+
+          return response;
         } catch {
           const cachedPage = await caches.match(request);
 
           if (cachedPage) {
             return cachedPage;
+          }
+
+          if (url.pathname === "/") {
+            const cachedHome = await caches.match("/");
+            if (cachedHome) return cachedHome;
           }
 
           const offlinePage = await caches.match(OFFLINE_URL);
