@@ -1,14 +1,14 @@
-# Java 6 — RideShare me PWA dhe funksionim offline
+# Java 6 — RideShare PWA dhe funksionimi offline
 
 ## Çfarë ndërtova
 
-Implementova funksionalitetin PWA për RideShare, me një lexues publik të udhëtimeve që mund të përdoret edhe pa internet.
+Implementova një lexues publik të udhëtimeve për RideShare, i cili mund të shfaqë listën edhe kur pajisja nuk ka lidhje me internetin.
 
-Lexuesi offline ndodhet te `/offline.html` dhe shfaq të dhënat publike të udhëtimeve.
+Faqja offline ndodhet te `/offline.html`. Ajo shfaq udhëtimet, statusin e lidhjes dhe kohën e ruajtjes së listës.
 
 ## API e udhëtimeve
 
-Endpoint-i `/api/udhetimet` kthen të dhënat publike në formatin JSON:
+Endpoint-i `/api/udhetimet` kthen të dhënat publike të udhëtimeve në formatin JSON:
 
 - id
 - nisja
@@ -17,7 +17,7 @@ Endpoint-i `/api/udhetimet` kthen të dhënat publike në formatin JSON:
 - vendtakimi
 - vende
 
-API-ja nuk ekspozon të dhëna personale të rezervimeve.
+API-ja kthen vetëm informacionin publik të udhëtimeve.
 
 ## Service Worker dhe cache
 
@@ -25,26 +25,32 @@ Service Worker ndodhet te `public/sw.js`.
 
 Cache-i publik quhet `rideshare-public-v1` dhe përdoret për të ruajtur faqen offline, ikonat dhe përgjigjen e API-së së udhëtimeve.
 
-Përgjigjja e API-së ruan kohën e ruajtjes dhe informacionin nëse të dhënat vijnë nga rrjeti apo nga cache-i.
-
-## Lexuesi offline
-
-Faqja `public/offline.html` shfaq listën e udhëtimeve, statusin e lidhjes dhe kohën e ruajtjes.
-
-Faqja përmban butonin “Rifresko listën” për të marrë të dhënat më të reja kur interneti është i disponueshëm.
-
-Lexuesi offline është vetëm për lexim. Rezervimet nuk konfirmohen pa internet.
+Përgjigjja e ruajtur përmban kohën e ruajtjes dhe informacionin nëse të dhënat vijnë nga rrjeti apo nga cache-i.
 
 ## Provat e kryera
 
-1. Hapa faqen `/offline.html` kur isha online.
-2. Verifikova që udhëtimet shfaqeshin.
-3. Aktivizova mënyrën Offline te DevTools → Network.
-4. Rifreskova faqen dhe verifikova që udhëtimet vazhdonin të shfaqeshin.
-5. Kontrollova që data dhe ora e ruajtjes ishin të dukshme.
-6. Riktheva lidhjen me internetin dhe përdora “Rifresko listën”.
-7. Verifikova që lista përditësohej nga serveri.
+### Prova 1 — Hapja e lexuesit offline
+
+**Hapat:** Hapa faqen `/offline.html` në shfletues kur kisha lidhje me internetin dhe prita të ngarkoheshin udhëtimet.
+
+**Rezultati:** Faqja u hap dhe shfaqi listën e udhëtimeve, statusin e lidhjes dhe kohën e ruajtjes.
+
+### Prova 2 — Funksionimi pa internet
+
+**Hapat:** Te DevTools, në skedën Network, aktivizova mënyrën Offline dhe rifreskova faqen `/offline.html`.
+
+**Rezultati:** Udhëtimet vazhduan të shfaqeshin pa lidhje me internetin. Data dhe ora e ruajtjes ishin të dukshme.
+
+### Prova 3 — Rifreskimi pas rikthimit të internetit
+
+**Hapat:** E ndryshova Network nga Offline në No throttling dhe klikova butonin “Rifresko listën”.
+
+**Rezultati:** Lista u rifreskua nga serveri dhe faqja shfaqi statusin e përditësimit.
+
+## Kufizimet
+
+Lexuesi offline shërben vetëm për të parë informacionin publik të udhëtimeve. Rezervimet nuk konfirmohen offline dhe kërkojnë lidhje me serverin.
 
 ## Përfundimi
 
-RideShare tani ka një lexues publik të udhëtimeve që funksionon edhe pa internet, duke përdorur të dhënat e ruajtura më parë. Funksionet e rezervimit vazhdojnë të kërkojnë lidhje me serverin.
+RideShare ka një lexues publik të udhëtimeve që mund të përdoret edhe pa internet, duke shfaqur të dhënat e ruajtura më parë dhe duke lejuar rifreskimin e listës kur lidhja rikthehet.
