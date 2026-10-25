@@ -1,5 +1,6 @@
 
-const CACHE_NAME = "rideshare-v1";
+
+const CACHE_NAME = "rideshare-v2";
 const OFFLINE_URL = "/offline.html";
 
 const STATIC_FILES = [
@@ -12,28 +13,40 @@ const STATIC_FILES = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      await Promise.allSettled(
-        STATIC_FILES.map((url) => cache.add(url))
-      );
-    })
-  );
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
 
-  self.skipWaiting();
+      for (const url of STATIC_FILES) {
+        try {
+          const response = await fetch(url);
+
+          if (response.ok) {
+            await cache.put(url, response);
+          }
+        } catch (error) {
+          console.warn("Skedari nuk u ruajt:", url);
+        }
+      }
+
+      await self.skipWaiting();
+    })()
+  );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      )
-    )
-  );
+    (async () => {
+      const keys = await caches.keys();
 
-  self.clients.claim();
+      await Promise.all(
+        keys
+          .filter((key) => key.startsWith("rideshare-") && key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      );
+
+      await self.clients.claim();
+    })()
+  );
 });
 
 self.addEventListener("fetch", (event) => {
@@ -46,24 +59,28 @@ self.addEventListener("fetch", (event) => {
 
   if (url.pathname === "/api/udhetimet") {
     event.respondWith(
-      fetch(request)
-        .then(async (response) => {
+      (async () => {
+        try {
+          const response = await fetch(request);
+
           if (response.ok) {
             const cache = await caches.open(CACHE_NAME);
             await cache.put(request, response.clone());
           }
+
           return response;
-        })
-        .catch(async () => {
+        } catch {
           const cached = await caches.match(request);
 
-          if (cached) return cached;
-
-          return Response.json(
-            { error: "Lista nuk është e disponueshme offline." },
-            { status: 503 }
+          return (
+            cached ||
+            Response.json(
+              { error: "Lista nuk është e disponueshme offline." },
+              { status: 503 }
+            )
           );
-        })
+        }
+      })()
     );
 
     return;
@@ -71,24 +88,49 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(async () => {
-        const cachedPage = await caches.match(request);
+      (async () => {
+        try {
+          const response = await fetch(request);
 
-        if (cachedPage) return cachedPage;
+          if (response.ok && url.pathname === "/") {
+            const cache = await caches.open(CACHE_NAME);
+            await cache.put("/", response.clone());
+          }
 
-        return (
-          (await caches.match(OFFLINE_URL)) ||
-          new Response("Je offline. Provo përsëri kur të kesh internet.", {
-            headers: { "Content-Type": "text/plain; charset=utf-8" },
-          })
-        );
-      })
+          return response;
+        } catch {
+          const cachedPage = await caches.match(request);
+
+          if (cachedPage) return cachedPage;
+
+          const offlinePage = await caches.match(OFFLINE_URL);
+
+          return (
+            offlinePage ||
+            new Response("Je offline. Provo përsëri kur të kesh internet.", {
+              headers: {
+                "Content-Type": "text/plain; charset=utf-8",
+              },
+            })
+          );
+        }
+      })()
     );
 
     return;
   }
 
   event.respondWith(
-    caches.match(request).then((cached) => cached || fetch(request))
+    (async () => {
+      const cached = await caches.match(request);
+
+      if (cached) return cached;
+
+      try {
+        return await fetch(request);
+      } catch {
+        return new Response("", { status: 503 });
+      }
+    })()
   );
 });
