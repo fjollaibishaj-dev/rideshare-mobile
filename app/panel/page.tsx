@@ -83,7 +83,9 @@ async function PanelPermbajtja({
       <p>
         <Link href="/">Kthehu te udhëtimet</Link>
       </p>
-      <p>Kërkesa për vend mbetet simulim këtë javë.</p>
+      <p>
+        Kërkesat ruhen me statusin “Në pritje".
+      </p>
     </main>
   );
 }
