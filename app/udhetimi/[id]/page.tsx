@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { lexoUdhetimet } from "@/lib/udhetimet";
 import RezervoVendin from "../../components/RezervoVendin";
-
+import Vendtakimi from "../../components/Vendtakimi";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -63,6 +63,7 @@ export default async function Page({ params }: Props) {
           id={udhetimi.id}
           vende={udhetimi.vendeLira}
         />
+        <Vendtakimi />
 
         <Link
           href="/"
