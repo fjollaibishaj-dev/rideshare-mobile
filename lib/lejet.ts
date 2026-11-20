@@ -12,6 +12,7 @@ type Profil = {
 
 export async function profiliIm(): Promise<Profil | null> {
   const session = await getServerSession(authOptions);
+  console.log("SEANCA:", session);
   const id = session?.user?.id;
 
   if (!id) return null;

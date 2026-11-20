@@ -2,7 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import KartaUdhetimi from "../components/KartaUdhetimi";
+import Link from "next/link";
+import KartaUdhetimi from "./components/KartaUdhetimi";
 import type { Udhetim } from "../lib/udhetimet";
 
 function normalizoTekstin(teksti: string) {
@@ -15,8 +16,10 @@ function normalizoTekstin(teksti: string) {
 
 export default function FaqjaKryesore({
   udhetimet,
+  preferimetFillestare,
 }: {
   udhetimet: Udhetim[];
+  preferimetFillestare: string[];
 }) {
   const [kerko, setKerko] = useState("");
 
@@ -31,15 +34,22 @@ export default function FaqjaKryesore({
     <main className="min-h-screen bg-slate-100 px-4 py-8 text-slate-900">
       <div className="mx-auto max-w-3xl">
         <header className="mb-8 rounded-2xl bg-blue-700 p-6 text-white">
-          <p className="text-sm font-medium">AAB College</p>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium">AAB College</p>
+              <h1 className="mt-2 text-3xl font-bold">UniRide</h1>
+              <p className="mt-2">
+                Gjej udhëtimin tënd drejt universitetit.
+              </p>
+            </div>
 
-          <h1 className="mt-2 text-3xl font-bold">
-            UniRide
-          </h1>
-
-          <p className="mt-2">
-            Gjej udhëtimin tënd drejt universitetit.
-          </p>
+            <Link
+              href="/panel"
+              className="shrink-0 rounded-xl bg-white px-4 py-3 font-semibold text-blue-700 hover:bg-blue-50"
+            >
+              Paneli im
+            </Link>
+          </div>
         </header>
 
         <section className="mb-8 rounded-2xl bg-white p-5 shadow-sm">
@@ -75,6 +85,9 @@ export default function FaqjaKryesore({
                 ora={udhetimi.ora}
                 vendtakimi={udhetimi.vendiNisjes}
                 vende={udhetimi.vendeLira}
+                preferuar={preferimetFillestare.includes(
+                  String(udhetimi.id)
+                )}
               />
             ))}
           </div>
