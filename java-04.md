@@ -2,13 +2,13 @@
 
 ## Çfarë ndërtova
 
-E lidha aplikacionin UniRide me databazën Neon duke përdorur PostgreSQL dhe paketën `@neondatabase/serverless`. Skedari `lib/db.ts` e lexon lidhjen nga variabla e mjedisit `DATABASE_URL`, ndërsa `lib/udhetimet.ts` lexon udhëtimet nga tabela `udhetimet`. Të dhënat shfaqen në faqen kryesore të aplikacionit.
+E lidha aplikacionin RideShare me databazën Neon duke përdorur PostgreSQL dhe paketën `@neondatabase/serverless`. Skedari `lib/db.ts` e lexon lidhjen nga variabla e mjedisit `DATABASE_URL`, ndërsa `lib/udhetimet.ts` lexon udhëtimet nga tabela `udhetimet`. Të dhënat shfaqen në faqen kryesore të aplikacionit.
 
 ## Provat që bëra
 
 ### Prova 1: Ndryshimi në databazë shfaqet në aplikacion
 
-Në Neon SQL Editor ndryshova orën e udhëtimit me ID `2` nga `08:15` në `08:25`. Pas rifreskimit të UniRide, ora u shfaq si `08:25`. Pastaj e riktheva orën në `08:15` dhe kontrollova që ndryshimi u ruajt në databazë.
+Në Neon SQL Editor ndryshova orën e udhëtimit me ID `2` nga `08:15` në `08:25`. Pas rifreskimit te Rideshare, ora u shfaq si `08:25`. Pastaj e riktheva orën në `08:15` dhe kontrollova që ndryshimi u ruajt në databazë.
 
 ### Prova 2: Lista bosh dhe rikthimi
 

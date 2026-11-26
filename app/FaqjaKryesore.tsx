@@ -37,7 +37,7 @@ export default function FaqjaKryesore({
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-medium">AAB College</p>
-              <h1 className="mt-2 text-3xl font-bold">UniRide</h1>
+              <h1 className="mt-2 text-3xl font-bold">Rideshare</h1>
               <p className="mt-2">
                 Gjej udhëtimin tënd drejt universitetit.
               </p>
@@ -111,7 +111,7 @@ export default function FaqjaKryesore({
         )}
 
         <footer className="mt-8 text-center text-sm text-slate-500">
-          UniRide — projekt demonstrues për studentët e AAB College.
+          Rideshare — projekt demonstrues për studentët e AAB College.
           <br />
           Të dhënat janë fiktive.
         </footer>
