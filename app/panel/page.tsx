@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import Hyrja from "@/components/Hyrja";
 import { profiliIm } from "@/lib/lejet";
 import { ruajOren } from "./actions";
+import KerkesatLive from "@/app/components/KerkesatLive";
 
 const mesazhet: Record<string, string> = {
   hyr: "Hyr në llogari para se të ndryshosh udhëtimin.",
@@ -52,7 +53,7 @@ async function PanelPermbajtja({
         </>
       )}
 
-      <Hyrja brenda={Boolean(p)} />
+      {p && <KerkesatLive roli={p.roli} />}
 
       {p?.roli === "shofer" ? (
         <form action={ruajOren}>
